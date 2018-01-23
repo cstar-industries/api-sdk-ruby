@@ -135,7 +135,7 @@ module Smartling
         return post_file(uri, :file => file)
     end
 
-    def listLocales(locale, file, name, type, state, params = nil)
+    def listLocales
         uri = uri("files-api/v2/projects/#{@projectId}/locales/list")
         return get(uri)
     end
