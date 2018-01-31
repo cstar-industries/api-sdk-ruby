@@ -1,11 +1,11 @@
 # Copyright 2012 Smartling, Inc.
-# 
+#
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
-# 
+#
 #    http://www.apache.org/licenses/LICENSE-2.0
-# 
+#
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -44,23 +44,24 @@ module Smartling
 
     def check_response(res)
       return if res.code == 200
-      format_api_error(res) 
-      raise 'API_ERROR' 
+      format_api_error(res)
+      raise 'API_ERROR'
     end
 
     def process(res)
       check_response(res)
+      p res.read_body
       body = MultiJson.load(res.body)
       if body['response']
         body = body['response']
         if body['code'] == 'SUCCESS'
           return body['data']
         else
-          format_api_error(res) 
-          raise 'API_ERROR' 
+          format_api_error(res)
+          raise 'API_ERROR'
         end
       end
-      raise 'API_ERROR' 
+      raise 'API_ERROR'
       return nil
     end
 
@@ -71,7 +72,7 @@ module Smartling
       end
 
       if body && body['response']
-        body = body['response'] 
+        body = body['response']
         STDERR.puts "\e[31m#{body['code']}\e[0m"
         if body['errors']
           body['errors'].each do |e|
@@ -86,13 +87,13 @@ module Smartling
       headers[:Authorization] = token_header() if auth
       headers[:content_type] = :json unless upload
       headers[:accept] = :json unless download
-      RestClient::Request.execute(:method => method, 
+      RestClient::Request.execute(:method => method,
                                   :url => uri.to_s,
                                   :payload => params,
                                   :headers => headers)  {|res, _, _|
         if download
           check_response(res)
-          res.body  
+          res.body
         else
           process(res)
         end
@@ -130,7 +131,7 @@ module Smartling
       return "Bearer #{t}"
     end
 
-    def process_auth(response) 
+    def process_auth(response)
       now = Time.new.to_i
       @token = response['accessToken']
       @token_expiration = now + response['expiresIn'].to_i - EXPIRATION_OFFSET
@@ -170,4 +171,3 @@ module Smartling
   end
 
 end
-
