@@ -64,7 +64,7 @@ module Smartling
     end
 
     # Download Translated Files - Multiple Locales as .ZIP - /files-api/v2/projects/{projectId}/files/zip (GET)
-    def download_translated_zip(names, params = nil)
+    def download_translated_zip(names, locales, params = nil)
       keys = { :fileUris => names, :localeIds => locales }
       uri = uri("files-api/v2/projects/#{@projectId}/files/zip", keys, params).require(:fileUris, :localeIds)
       return get_raw(uri)
